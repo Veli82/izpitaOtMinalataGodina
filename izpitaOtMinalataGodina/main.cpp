@@ -320,7 +320,7 @@ template <typename T>
 class AlternateDataSource : public DataSource<T>
 {
 public:
-	AlternateDataSource(const DataSource<T>** arr, unsigned size)
+	AlternateDataSource(const DataSource<T>* const* arr, unsigned size)
 	{
 		copy(arr, size);
 	}
@@ -353,7 +353,7 @@ public:
 		{
 			try
 			{
-				if (++pos == size) pos = 0
+				if (++pos == size) pos = 0;
 				T temp = array[pos]->getNext();
 				return temp;
 			}
@@ -408,7 +408,7 @@ public:
 		return *this;
 	}
 
-	DataSource<T>* clone() override
+	DataSource<T>* clone() const override
 	{
 		return new AlternateDataSource<T>(*this);
 	}
@@ -419,9 +419,9 @@ private:
 	int size;
 	int pos;
 
-	void copy(const DataSource<T>** arr, unsigned size)
+	void copy(const DataSource<T>* const* arr, unsigned size)
 	{
-		array = new T * [size];
+		DataSource<T>** array = new DataSource<T>*[size] {};
 		for (int i = 0; i < size; i++)
 		{
 			try
@@ -440,6 +440,7 @@ private:
 		}
 		this->size = size;
 		this->pos = 0;
+		this->array = array;
 	}
 
 	void swap(AlternateDataSource<T>& other)
